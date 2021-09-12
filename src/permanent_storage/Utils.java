@@ -15,9 +15,14 @@ public class Utils {
         System.out.print("\n"+s);
     }
     public static boolean startWithNumber(String s){
-        return s.charAt(0)>='0'&&s.charAt(0)<='9';
+        return (s.charAt(0)>='0'&&s.charAt(0)<='9')||s.charAt(0)=='-';
     }
     public static int convert(String s){
+        boolean df = false;
+        if(s.charAt(0)=='-'){
+            s = s.substring(1);
+            df = true;
+        }
         s = s.trim();
         //这里假设s是一个纯数字字符串，例如 123，132，788
         int l = s.length();
@@ -26,7 +31,7 @@ public class Utils {
             res *= 10;
             res += convert(s.charAt(l-1-i));
         }
-        return res;
+        return df?(-1*res):res;
     }
     public static int convert(char c){
         return (int)(c-48);

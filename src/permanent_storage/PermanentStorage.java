@@ -66,11 +66,11 @@ public class PermanentStorage {
             StringBuilder sb = new StringBuilder();
             StringBuilder bo = new StringBuilder();
             for(StorageMenu menu:this.data){
-                menu.order = 1;
+                menu.order = -1;
                 sb.append(menu.name).append("\n");
                 bo.append(menu.order).append(" ");
                 for(StorageItem si : menu.data){
-                    si.order = 2;
+                    si.order = 0;
                     if(si.hasItem){
                         iterator(si,sb,si.order,bo);
                     }else{
@@ -127,25 +127,24 @@ public class PermanentStorage {
         try{
             FileReader fr = new FileReader(ps.file);
             BufferedReader br = new BufferedReader(fr);
-            ArrayList<Object> ob = new ArrayList<>();
             String s;
+            StorageMenu sm = null;
+            ArrayList<StorageItem> ob = null;
             int[] sys = new int[0];
             int counter = 0;
             int start = 0;
-//            Object[] objs = new Object[0];
             int maxOrder = 0;
             boolean hasGenerate = false;
-            int mini = 1;
-            int maxi = 1;
+            int mini = -1;
+            int maxi = -1;
             while((s=br.readLine())!=null){
                 s = s.trim();
-                if(startWithNumber(s)){
+                boolean k = startWithNumber(s);
+                if(k){
                     String[] symbols;
                     symbols = s.split(" ");
                     sys = new int[symbols.length];
                     counter = sys.length;
-                    System.out.println("counter "+counter);
-//                    objs = new Object[counter];
                     for(int i = 0;i<symbols.length;i++){
                         sys[i] = convert(symbols[i]);
                         maxOrder = Math.max(maxOrder,sys[i]);
@@ -154,60 +153,46 @@ public class PermanentStorage {
                     start++;
                     if(start<=counter){
                         if(!hasGenerate){
-                            ob = new ArrayList<Object>(maxOrder-1);
-                            ob.add("1");
-                            ob.add("1");
-                            ob.add("1");
-                            ob.add("1");
+                            ob = new ArrayList<>(maxOrder+1);
+                            for(int i = 0;i < maxOrder+1;i++){
+                                ob.add(new StorageItem(i+" "));
+                            }
                             hasGenerate = true;
                         }
-//                    objs[start-1] = new StorageItem(s);
-                        if(sys[start-1]==mini){
-                            System.out.println(start+"mini == 1"+s);
-                            ob.set(0,new StorageMenu(s));
-                            ps.add(((StorageMenu)(ob.get(0))));
+                        int ki = sys[start-1];
+                        if(ki==mini){
+                            sm = new StorageMenu(s);
+                            ps.add(sm);
                             maxi = mini;
-//                        System.out.println(sys[start-1]+s+" added to "+"root");
-                        }else if(sys[start-1]>maxi){
-                            System.out.println(start+">"+s);
-                            ob.set(sys[start-1]-1,new StorageItem(s));
-                            if(maxi==1){
-                                ((StorageMenu)(ob.get(0))).add(new StorageItem(s));
+                        }else if(ki>maxi){
+                            if(maxi==-1){
+                                assert sm != null;
+                                ob.set(0,new StorageItem(s));
+                                sm.add(ob.get(0));
                             }else{
-                                ((StorageItem)(ob.get(maxi-1))).add(new StorageItem(s));
+                                ob.set(ki,new StorageItem(s));
+                                ob.get(ki-1).add(ob.get(ki));
                             }
-//                        System.out.println(sys[start-1]+s+" added to "+maxi);
                             maxi = sys[start-1];
-                        }else if(sys[start-1]==maxi){
-                            System.out.println(start+"="+s);
-                            //忽略了1，1这种情况
-                            ob.set(sys[start-1]-1,new StorageItem(s));
-                            ((StorageItem)(ob.get(sys[start-1]-2))).add(new StorageItem(s));
-                            System.out.println("set ob "+((StorageItem)(ob.get(sys[start-1]-2))).name+s);
-//                        System.out.println("add "+s+" to "+(maxi-1));
-                        }else if(sys[start-1]<maxi){
-                            System.out.println(start+"<"+s);
-                            ob.set(sys[start-1]-1,new StorageItem(s));
-                            maxi = sys[start-1];
+                        }else if(ki==maxi){
+                            ob.set(ki,new StorageItem(s));
+                            ob.get(ki-1).add(ob.get(ki));
                         }else{
-                            System.out.println(start+"?"+s);
-                            System.out.println("un thinking problems");
+                            //ki < maxi
+                            ob.set(ki,new StorageItem(s));
+                            if(ki==0){
+                                assert sm != null;
+                                sm.add(ob.get(0));
+                            }else{
+                                ob.get(ki-1).add(ob.get(ki));
+                            }
+                            maxi = ki;
                         }
-                        System.out.println("start "+start);
-//                        if(start==4){
-//                            for(StorageItem si : ((StorageMenu)ob.get(0)).data){
-//                                PrintItem(si);
-//                            }
-//                            System.out.println();
-//                        }
                     }
 
 
                 }
-                //我们使得数字层次加载在前
             }
-//            System.out.println("start"+start);
-//            System.out.println("counter"+counter);
         } catch (IOException e) {
             e.printStackTrace();
         }

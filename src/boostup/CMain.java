@@ -33,21 +33,5 @@ public class CMain {
         ps.write(ps.file.getAbsolutePath());
         PermanentStorage kl = PermanentStorage.getInstance("C:\\Users\\Public\\Roaming\\test.ps");
         kl.write("C:\\Users\\Public\\Roaming\\test2.ps");
-//        for(StorageMenu sm:ps.data){
-//            if(sm.data.size()>0){
-//                for(StorageItem si:sm.data){
-//                    if(si.data.size()>0){
-//                        for(StorageItem sis:si.data){
-//                            System.out.println(sm.name+" "+si.name+" "+sis.name);
-//                        }
-//                    }else{
-//                        System.out.println(sm.name+" "+si.name);
-//                    }
-//                }
-//            }else{
-//                System.out.println(sm.name);
-//            }
-//
-//        }
     }
 }

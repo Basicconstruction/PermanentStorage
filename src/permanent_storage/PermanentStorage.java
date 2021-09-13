@@ -2,9 +2,9 @@ package permanent_storage;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Objects;
 
-import static permanent_storage.Utils.*;
+import static permanent_storage.Utils.convert;
+import static permanent_storage.Utils.startWithNumber;
 
 public class PermanentStorage {
     public File file;
@@ -61,29 +61,8 @@ public class PermanentStorage {
     }
     public void write(String path){
         try{
-            FileWriter fw = new FileWriter(new File(path));
-            BufferedWriter bfw = new BufferedWriter(fw);
-            StringBuilder sb = new StringBuilder();
-            StringBuilder bo = new StringBuilder();
-            for(StorageMenu menu:this.data){
-                menu.order = -1;
-                sb.append(menu.name).append("\n");
-                bo.append(menu.order).append(" ");
-                for(StorageItem si : menu.data){
-                    si.order = 0;
-                    if(si.hasItem){
-                        iterator(si,sb,si.order,bo);
-                    }else{
-                        sb.append(si.name).append("\n");
-                        bo.append(si.order).append(" ");
-                    }
-                }
-            }
-            bfw.write((bo.append("\n")).toString());
-            bfw.write(sb.toString());
-            bfw.close();
-            fw.close();
-            System.out.println("保存到文件成功");
+            FileWriter fw = new FileWriter(path);
+            Writer(fw);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,33 +71,24 @@ public class PermanentStorage {
     public void iterator(StorageItem item,StringBuilder bs,int order,StringBuilder ob){
         item.order = order;
         if(item.hasItem){
-            bs.append(item.name).append("\n");
+            if(!(item.value==null)){
+                bs.append(item.name).append(" , ").append(item.value).append("\n");
+            }else{
+                bs.append(item.name).append("\n");
+            }
             ob.append(order).append(" ");
+
             for(StorageItem si:item.data){
                 iterator(si,bs,order+1,ob);
             }
         }else{
-            bs.append(item.name).append("\n");
+            if(!(item.value==null)){
+                bs.append(item.name).append(" , ").append(item.value).append("\n");
+            }else{
+                bs.append(item.name).append("\n");
+            }
             ob.append(order).append(" ");
 
-        }
-    }
-    public void TestPrint(){
-        for(StorageMenu menu:this.data){
-            println(menu.name);
-            for(StorageItem si : menu.data){
-                PrintItem(si);
-            }
-        }
-    }
-    public static void PrintItem(StorageItem item){
-        println(item.name);
-        if(item.hasItem){
-            for(StorageItem si:item.data){
-                PrintItem(si);
-            }
-        }else{
-            System.out.print(" : "+item.value);
         }
     }
     public static PermanentStorage getInstance(String path){
@@ -137,6 +107,7 @@ public class PermanentStorage {
             boolean hasGenerate = false;
             int mini = -1;
             int maxi = -1;
+            String value;
             while((s=br.readLine())!=null){
                 s = s.trim();
                 boolean k = startWithNumber(s);
@@ -151,6 +122,11 @@ public class PermanentStorage {
                     }
                 }else{
                     start++;
+                    value = null;
+                    if(s.split(",").length>1){
+                        value = (s.split(",")[1]).trim();
+                        s = (s.split(",")[0]).trim();
+                    }
                     if(start<=counter){
                         if(!hasGenerate){
                             ob = new ArrayList<>(maxOrder+1);
@@ -161,25 +137,25 @@ public class PermanentStorage {
                         }
                         int ki = sys[start-1];
                         if(ki==mini){
-                            sm = new StorageMenu(s);
+                            sm = new StorageMenu(s,value);
                             ps.add(sm);
                             maxi = mini;
                         }else if(ki>maxi){
                             if(maxi==-1){
                                 assert sm != null;
-                                ob.set(0,new StorageItem(s));
+                                ob.set(0,new StorageItem(s,value));
                                 sm.add(ob.get(0));
                             }else{
-                                ob.set(ki,new StorageItem(s));
+                                ob.set(ki,new StorageItem(s,value));
                                 ob.get(ki-1).add(ob.get(ki));
                             }
                             maxi = sys[start-1];
                         }else if(ki==maxi){
-                            ob.set(ki,new StorageItem(s));
+                            ob.set(ki,new StorageItem(s,value));
                             ob.get(ki-1).add(ob.get(ki));
                         }else{
                             //ki < maxi
-                            ob.set(ki,new StorageItem(s));
+                            ob.set(ki,new StorageItem(s,value));
                             if(ki==0){
                                 assert sm != null;
                                 sm.add(ob.get(0));
@@ -197,5 +173,66 @@ public class PermanentStorage {
             e.printStackTrace();
         }
         return ps;
+    }
+    public void set(String label,String value){
+        for(int i =0;i < this.data.size();i++){
+            if((this.data.get(i)).name.equals(label)){
+                (this.data.get(i)).value = value;
+            }
+            if((this.data.get(i)).hasItem){
+                StorageMenu.set(this.data.get(i),label,value);
+            }
+        }
+    }
+    public String get(String label,String value){
+        for(int i =0;i < this.data.size();i++){
+            if((this.data.get(i)).name.equals(label)){
+                return (this.data.get(i)).value;
+            }
+            if((this.data.get(i)).hasItem){
+                if(StorageMenu.get(this.data.get(i),label)!=null){
+                    return StorageMenu.get(this.data.get(i),label);
+                }
+            }
+        }
+        return null;
+    }
+    public void write(){
+        try{
+            FileWriter fw = new FileWriter(this.file);
+            Writer(fw);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void Writer(FileWriter fw) throws IOException {
+        BufferedWriter bfw = new BufferedWriter(fw);
+        StringBuilder sb = new StringBuilder();
+        StringBuilder bo = new StringBuilder();
+        for(StorageMenu menu:this.data){
+            menu.order = -1;
+            if(menu.value == null){
+                sb.append(menu.name).append("\n");
+            }else{
+                sb.append(menu.name).append(" , ").append(menu.value).append("\n");
+            }
+            bo.append(menu.order).append(" ");
+            for(StorageItem si : menu.data){
+                si.order = 0;
+                if(si.hasItem){
+                    iterator(si,sb,si.order,bo);
+                }else{
+                    sb.append(si.name).append("\n");
+                    bo.append(si.order).append(" ");
+                }
+            }
+        }
+        bfw.write((bo.append("\n")).toString());
+        bfw.write(sb.toString());
+        bfw.close();
+        fw.close();
+        System.out.println("保存到文件成功");
     }
 }

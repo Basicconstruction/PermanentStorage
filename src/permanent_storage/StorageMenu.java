@@ -31,4 +31,55 @@ public class StorageMenu {
         data.add(item);
         hasItem = true;
     }
+    public static void set(StorageMenu sm, String label, String value){
+        if(sm.name.equals(label)){
+            sm.value = value;
+        }else{
+            if(sm.hasItem){
+                for(int i = 0;i < sm.data.size();i++){
+                    StorageItem.set(sm.data.get(i),label,value);
+                }
+            }
+        }
+    }
+    public void set(String label,String value){
+        if(this.name.equals(label)){
+            this.value = value;
+        }else{
+            if(this.hasItem){
+                for(int i = 0;i < this.data.size();i++){
+                    StorageItem.set(this.data.get(i),label,value);
+                }
+            }
+        }
+    }
+    public static String get(StorageMenu sm, String label){
+        if(sm.name.equals(label)){
+            return sm.value;
+        }else{
+            if(sm.hasItem){
+                for(int i = 0;i < sm.data.size();i++){
+                    if(StorageItem.get(sm.data.get(i),label)!=null){
+                        return StorageItem.get(sm.data.get(i),label);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public String get(String label){
+        if(this.name.equals(label)){
+            return this.value;
+        }else{
+            if(this.hasItem){
+                for(int i = 0;i < this.data.size();i++){
+                    if(StorageItem.get(this.data.get(i),label)!=null){
+                        return StorageItem.get(this.data.get(i),label);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 }

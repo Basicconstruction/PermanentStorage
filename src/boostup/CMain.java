@@ -21,14 +21,15 @@ public class CMain {
 //        i11.add(i112);
 //        ps.TestPrint();
         ArrayList<StorageItem> hj = new ArrayList<>();
-        hj.add(new StorageItem("热带水果"));
+        hj.add(new StorageItem("热带水果","2000"));
         hj.add(new StorageItem("亚热带水果"));
         m1.add(hj.get(0));
         m1.add(hj.get(1));
-        hj.add(new StorageItem("菠萝"));
-        hj.add(new StorageItem("牛皮"));
+        hj.add(new StorageItem("菠萝","100"));
+        hj.add(new StorageItem("牛皮","299"));
         hj.get(0).add(hj.get(2));
         hj.get(0).add(hj.get(3));
+        ps.set("牛皮","77777");
 
         ps.write(ps.file.getAbsolutePath());
         PermanentStorage kl = PermanentStorage.getInstance("C:\\Users\\Public\\Roaming\\test.ps");

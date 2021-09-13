@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 public class Utils {
     public static String MultiString(String s,int count){
-//        StringBuilder str = new StringBuilder();
-//        str.append(String.valueOf(s).repeat(Math.max(0, count)));
         return new String(String.valueOf(s).repeat(Math.max(0,count)));
     }
     public static void print(String s){
@@ -40,4 +38,16 @@ public class Utils {
         Arrays.sort(array);
         return array[array.length-1];
     }
+    public static void set(StorageItem item, String label, String value){
+        if(item.name.equals(label)){
+            item.value = value;
+        }else{
+            if(item.hasItem){
+                for(int i = 0;i < item.data.size();i++){
+                    set(item.data.get(i),label,value);
+                }
+            }
+        }
+    }
+
 }

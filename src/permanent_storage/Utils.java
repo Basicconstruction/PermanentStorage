@@ -1,5 +1,8 @@
 package permanent_storage;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Utils {
@@ -38,16 +41,14 @@ public class Utils {
         Arrays.sort(array);
         return array[array.length-1];
     }
-    public static void set(StorageItem item, String label, String value){
-        if(item.name.equals(label)){
-            item.value = value;
-        }else{
-            if(item.hasItem){
-                for(int i = 0;i < item.data.size();i++){
-                    set(item.data.get(i),label,value);
-                }
-            }
+    public static StringBuilder getSingleStringBuilder(ArrayList<StringBuilder> sbList){
+        StringBuilder res = new StringBuilder();
+        for(StringBuilder sb:sbList){
+            res.append(sb);
         }
+        return res;
     }
+
+
 
 }

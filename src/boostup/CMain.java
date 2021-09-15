@@ -4,6 +4,7 @@ import permanent_storage.PermanentStorage;
 import permanent_storage.StorageItem;
 import permanent_storage.StorageMenu;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class CMain {
@@ -32,7 +33,8 @@ public class CMain {
         ps.set("牛皮","77777");
 
         ps.write(ps.file.getAbsolutePath());
-        PermanentStorage kl = PermanentStorage.getInstance("C:\\Users\\Public\\Roaming\\test.ps");
+        PermanentStorage kl = PermanentStorage.getInstance(new File("C:\\Users\\Public\\Roaming\\test.ps"));
+        kl.TestPrint();
         kl.write("C:\\Users\\Public\\Roaming\\test2.ps");
     }
 }

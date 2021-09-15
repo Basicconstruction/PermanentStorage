@@ -8,6 +8,8 @@ public class StorageMenu {
     public String value;
     public int order;
     public boolean hasItem;
+    public boolean includedInParent = true;
+    public String singleLocation = null;
     public StorageMenu(String name) {
         this.name = name;
         this.order = 0;
@@ -18,6 +20,21 @@ public class StorageMenu {
         this.value = value;
         this.order = 0;
         hasItem = false;
+    }
+    public StorageMenu(String name,boolean includedInParent,String singleLocation) {
+        this.name = name;
+        this.order = 0;
+        hasItem = false;
+        this.includedInParent = includedInParent;
+        this.singleLocation = singleLocation;
+    }
+    public StorageMenu(String name,String value,boolean includedInParent,String singleLocation) {
+        this.name = name;
+        this.value = value;
+        this.order = 0;
+        hasItem = false;
+        this.includedInParent = includedInParent;
+        this.singleLocation = singleLocation;
     }
     public void removeStorageItemByIndex(int index){
         data.remove(data.get(index));
